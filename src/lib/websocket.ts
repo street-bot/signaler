@@ -52,6 +52,7 @@ export class WSTransport {
     }
     this.connTable.set(payload.RobotID, entry); // Set the connection Table with the RobotID and WebSocket object(s)
     ws.RobotID = payload.RobotID;               // Set the RobotID associated with this WebSocket connection
+    this.logger.info(`Registered robot: ${payload.RobotID}`);
   }
 
   private handleClientRegistration(ws: ExtendedWebSocket, payload: IRobotRegistrationPayload) {
@@ -60,6 +61,7 @@ export class WSTransport {
       robotEntry.Client = ws;
       this.connTable.set(payload.RobotID, robotEntry);
       ws.RobotID = payload.RobotID; // Set the RobotID associated with this WebSocket connection
+      this.logger.info(`Registered client on robot: ${payload.RobotID}`);
     } else {
       throw new Error(`RobotID ${payload.RobotID} not registered on signaling relay`);
     }
@@ -67,7 +69,7 @@ export class WSTransport {
 
   public register(): void {
     this.wss.on('connection', (ws: ExtendedWebSocket) => {
-
+      
       ws.on('message', (msg: string) => {
         try {
           const parsedMsg = ParseMessage(msg);
@@ -83,10 +85,11 @@ export class WSTransport {
           }
         } catch (e) {
           this.logger.error(e);
-          ws.send(new ErrorMsg(e));
+          ws.send(JSON.stringify(new ErrorMsg(e.message)));
         }
       });
 
+      // Register/Deregister robot and client
       ws.on('close', (reason: string) => {
         switch(ws.Type) {
           case RobotType: 
