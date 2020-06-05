@@ -5,9 +5,9 @@ export const ErrMsgType = 'err';
 
 // WebSocket message type
 export interface IWSMessage {
-  type: string, 
-  payload: any,
-  toString(): string
+  Type: string, 
+  Payload: any,
+  ToString(): string
 }
 
 // Robot registration message payload type
@@ -16,45 +16,45 @@ export interface IRobotRegistrationPayload {
 }
 
 export class WSMessage implements IWSMessage {
-  type: string;
-  payload: any;
+  Type: string;
+  Payload: any;
 
   constructor() {
-    this.type = "";
-    this.payload = {}
+    this.Type = "";
+    this.Payload = {}
   }
 
-  public toString(): string {
+  public ToString(): string {
     return JSON.stringify(this);
   } 
 }
 
 // Robot registration message 
 export class RobotRegistrationMsg extends WSMessage {
-  payload: IRobotRegistrationPayload;
+  Payload: IRobotRegistrationPayload;
 
   constructor(payload: any) {
     super()
-    this.type = RobotRegistrationMsgType;
-    this.payload = {RobotID: payload['RobotID']};
+    this.Type = RobotRegistrationMsgType;
+    this.Payload = {RobotID: payload['RobotID']};
   }
 }
 
 // Client registration message 
 export class ClientRegistrationMsg extends WSMessage {
-  payload: IRobotRegistrationPayload;
+  Payload: IRobotRegistrationPayload;
 
   constructor(payload: any) {
     super();
-    this.type = ClientRegistrationMsgType;
-    this.payload = {RobotID: payload['RobotID']};
+    this.Type = ClientRegistrationMsgType;
+    this.Payload = {RobotID: payload['RobotID']};
   }
 }
 
 export class ErrorMsg extends WSMessage {
   constructor(msg: string) {
     super();
-    this.type = ErrMsgType;
-    this.payload = msg;
+    this.Type = ErrMsgType;
+    this.Payload = msg;
   }
 }

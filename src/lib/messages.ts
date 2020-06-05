@@ -3,13 +3,13 @@ import { IWSMessage, RobotRegistrationMsgType, RobotRegistrationMsg, ClientRegis
 // Parse an input string into the appropriate message types
 export function ParseMessage(input: string): IWSMessage{
   const parsedMsg = JSON.parse(input);
-  switch (parsedMsg.type) {
+  switch (parsedMsg.Type) {
     case RobotRegistrationMsgType:
-      return new RobotRegistrationMsg(parsedMsg['payload']);
+      return new RobotRegistrationMsg(parsedMsg['Payload']);
     case ClientRegistrationMsgType:
-      return new ClientRegistrationMsg(parsedMsg['payload']);
+      return new ClientRegistrationMsg(parsedMsg['Payload']);
       
     default: 
-      throw new Error(`unsupported type: ${parsedMsg.type}`);
+      throw new Error(`unsupported type: ${parsedMsg.Type}`);
   } 
 }

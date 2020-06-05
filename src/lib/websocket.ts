@@ -50,6 +50,9 @@ export class WSTransport {
       Robot: ws,
       Client: undefined
     }
+    if(this.connTable.get(payload.RobotID)) {
+      throw new Error(`RobotID ${payload.RobotID} is already registered!`)
+    }
     this.connTable.set(payload.RobotID, entry); // Set the connection Table with the RobotID and WebSocket object(s)
     ws.RobotID = payload.RobotID;               // Set the RobotID associated with this WebSocket connection
     this.logger.info(`Registered robot: ${payload.RobotID}`);
@@ -69,18 +72,18 @@ export class WSTransport {
 
   public register(): void {
     this.wss.on('connection', (ws: ExtendedWebSocket) => {
-      
+      this.logger.info('A client connected!');
       ws.on('message', (msg: string) => {
         try {
           const parsedMsg = ParseMessage(msg);
-          switch(parsedMsg.type) {
+          switch(parsedMsg.Type) {
             case RobotRegistrationMsgType:
               ws.Type = RobotType;    // Set WebSocket connection type
-              this.handleRobotRegistration(ws, parsedMsg.payload);
+              this.handleRobotRegistration(ws, parsedMsg.Payload);
               break;
             case ClientRegistrationMsgType:
               ws.Type = ClientType;   // Set WebSocket connection type
-              this.handleClientRegistration(ws, parsedMsg.payload);
+              this.handleClientRegistration(ws, parsedMsg.Payload);
               break;
           }
         } catch (e) {
@@ -90,14 +93,14 @@ export class WSTransport {
       });
 
       // Register/Deregister robot and client
-      ws.on('close', (reason: string) => {
+      ws.on('close', (code: number, reason: string) => {
         switch(ws.Type) {
           case RobotType: 
-            this.logger.info(`${RobotType} disconnected due to ${reason}`);
+            this.logger.info(`${RobotType} disconnected due to ${code.toString()}:${reason}`);
             this.handleRobotDeregistration(ws);
             break;
           case ClientType: 
-            this.logger.info(`${ClientType} disconnected due to ${reason}`);
+            this.logger.info(`${ClientType} disconnected due to ${code.toString()}:${reason}`);
             this.handleClientDeregistration(ws);
             break;
           default: 
