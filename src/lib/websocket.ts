@@ -2,7 +2,7 @@ import WebSocket from 'ws';
 import * as http from 'http';
 import { ParseMessage } from './messages';
 import {Logger} from 'pino';
-import { RobotRegistrationMsgType, ConnectionTableEntry, IRobotRegistrationPayload, ClientRegistrationMsgType, ErrorMsg, ExtendedWebSocket, RobotType, ClientType} from '../types';
+import { RobotRegistrationMsgType, ConnectionTableEntry, IRobotRegistrationPayload, ClientRegistrationMsgType, ErrorMsg, ExtendedWebSocket, RobotType, ClientType, WSMessage, RegSuccessType} from '../types';
 
 export class WSTransport {
   private wss: WebSocket.Server;
@@ -65,6 +65,9 @@ export class WSTransport {
       this.connTable.set(payload.RobotID, robotEntry);
       ws.RobotID = payload.RobotID; // Set the RobotID associated with this WebSocket connection
       this.logger.info(`Registered client on robot: ${payload.RobotID}`);
+      const successResponse = new WSMessage();
+      successResponse.Type = RegSuccessType;
+      ws.send(successResponse.ToString());
     } else {
       throw new Error(`RobotID ${payload.RobotID} not registered on signaling relay`);
     }
@@ -73,6 +76,12 @@ export class WSTransport {
   public register(): void {
     this.wss.on('connection', (ws: ExtendedWebSocket) => {
       this.logger.info('A client connected!');
+
+      // // Keep-alive ping echoes
+      // ws.on('ping', () => {
+      //   this.logger.info("ping");
+      // })
+
       ws.on('message', (msg: string) => {
         try {
           const parsedMsg = ParseMessage(msg);

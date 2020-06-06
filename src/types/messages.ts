@@ -2,6 +2,7 @@
 export const RobotRegistrationMsgType = 'RReg';
 export const ClientRegistrationMsgType = 'CReg';
 export const ErrMsgType = 'err';
+export const RegSuccessType = 'RegSuccess';
 
 // WebSocket message type
 export interface IWSMessage {
