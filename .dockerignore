@@ -1,0 +1,6 @@
+node_modules/
+.eslintignore
+.esintrc
+.gitignore
+Dockerfile
+nodemon.json
