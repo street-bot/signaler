@@ -1,7 +1,9 @@
 // Message type constants
 export const RobotRegistrationMsgType = 'RReg';
 export const ClientRegistrationMsgType = 'CReg';
-export const ErrMsgType = 'err';
+export const OfferMsgType = 'Offer';
+export const OfferResponseMsgType = 'OfferResponse';
+export const ErrMsgType = 'Err';
 export const RegSuccessType = 'RegSuccess';
 
 // WebSocket message type
@@ -14,6 +16,11 @@ export interface IWSMessage {
 // Robot registration message payload type
 export interface IRobotRegistrationPayload {
   RobotID: string
+}
+
+// SDP payload type
+export interface ISDPPayload {
+  SDPStr: string
 }
 
 export class WSMessage implements IWSMessage {
@@ -49,6 +56,28 @@ export class ClientRegistrationMsg extends WSMessage {
     super();
     this.Type = ClientRegistrationMsgType;
     this.Payload = {RobotID: payload['RobotID']};
+  }
+}
+
+// SDP Offer message 
+export class OfferMsg extends WSMessage {
+  Payload: ISDPPayload;
+
+  constructor(payload: any) {
+    super();
+    this.Type = OfferMsgType;
+    this.Payload = {SDPStr: payload['SDPStr']};
+  }
+}
+
+// SDP Response message 
+export class OfferResponseMsg extends WSMessage {
+  Payload: ISDPPayload;
+
+  constructor(payload: any) {
+    super();
+    this.Type = OfferResponseMsgType;
+    this.Payload = {SDPStr: payload['SDPStr']};
   }
 }
 
