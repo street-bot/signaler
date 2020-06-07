@@ -34,11 +34,14 @@ export class WSTransport {
       // The client is associated with a robot
       const connEntry = this.connTable.get(ws.RobotID);
       if (connEntry){
+        const dregMsg = new types.ClientDeregistrationMsg();
+        connEntry.Robot.send(dregMsg.ToString()); // Tell the robot that the client has disconnected
         connEntry.Client = undefined;
       } else {
         this.logger.error(`Client WebSocket associated with robot ${ws.RobotID} without the corresponding connection entry!`);
       }
 
+      this.logger.info(`Successfully deregistered client ${ws.RobotID}`);
       ws.RobotID = "";
     }
 
@@ -67,6 +70,7 @@ export class WSTransport {
       this.logger.info(`Registered client on robot: ${payload.RobotID}`);
       const successResponse = new types.WSMessage();
       successResponse.Type = types.RegSuccessType;
+      successResponse.Payload = payload;  // Reflect the RobotID payload
       ws.send(successResponse.ToString());
     } else {
       throw new Error(`RobotID ${payload.RobotID} not registered on signaling relay`);
@@ -150,15 +154,15 @@ export class WSTransport {
       // Register/Deregister robot and client
       ws.on('close', (code: number, reason: string) => {
         switch(ws.Type) {
-          case types.RobotType: 
+          case types.RobotType:
             this.logger.info(`${types.RobotType} disconnected due to ${code.toString()}:${reason}`);
             this.handleRobotDeregistration(ws);
             break;
-          case types.ClientType: 
+          case types.ClientType:
             this.logger.info(`${types.ClientType} disconnected due to ${code.toString()}:${reason}`);
             this.handleClientDeregistration(ws);
             break;
-          default: 
+          default:
             this.logger.warn('Unregistered client disconnected!');
         }
       })
