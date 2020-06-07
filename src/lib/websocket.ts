@@ -34,11 +34,14 @@ export class WSTransport {
       // The client is associated with a robot
       const connEntry = this.connTable.get(ws.RobotID);
       if (connEntry){
+        const dregMsg = new types.ClientDeregistrationMsg();
+        connEntry.Robot.send(dregMsg.ToString()); // Tell the robot that the client has disconnected
         connEntry.Client = undefined;
       } else {
         this.logger.error(`Client WebSocket associated with robot ${ws.RobotID} without the corresponding connection entry!`);
       }
 
+      this.logger.info(`Successfully deregistered client ${ws.RobotID}`);
       ws.RobotID = "";
     }
 
