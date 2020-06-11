@@ -19,6 +19,9 @@ export class WSTransport {
     const connectionEntry = this.connTable.get(ws.RobotID);
     if (connectionEntry) {
       if(connectionEntry.Client?.RobotID) {
+        // Inform the client that the robot has been disconnected
+        const dregMsg = new types.RobotDeregistrationMsg(connectionEntry.Client.RobotID);
+        connectionEntry.Client.send(dregMsg.ToString());
         // Dessociate any connected clients
         connectionEntry.Client.RobotID = "";
       }

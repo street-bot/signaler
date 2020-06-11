@@ -1,5 +1,6 @@
 // Message type constants
 export const RobotRegistrationMsgType = 'RReg';
+export const RobotDeregistrationMsgType = 'RDreg';
 export const ClientRegistrationMsgType = 'CReg';
 export const ClientDeregistrationMsgType = 'CDreg';
 export const OfferMsgType = 'Offer';
@@ -49,6 +50,19 @@ export class RobotRegistrationMsg extends WSMessage {
   }
 }
 
+// Robot deregistration message
+export class RobotDeregistrationMsg extends WSMessage {
+  Payload: IRobotRegistrationPayload;
+
+  constructor(RobotID: string) {
+    super();
+    this.Type = RobotDeregistrationMsgType;
+    this.Payload = {
+      RobotID: RobotID
+    };
+  }
+}
+
 // Client registration message
 export class ClientRegistrationMsg extends WSMessage {
   Payload: IRobotRegistrationPayload;
@@ -59,6 +73,7 @@ export class ClientRegistrationMsg extends WSMessage {
     this.Payload = {RobotID: payload['RobotID']};
   }
 }
+
 // Client deregistration message
 export class ClientDeregistrationMsg extends WSMessage {
   Payload: any;
