@@ -30,7 +30,7 @@ export class SignalServer {
 
     public start(): void {
         this.rt.register();
-        this.httpServer.listen(this.port, () => {
+        this.httpServer.listen(this.port, "0.0.0.0", () => {
             console.log("Running server on port %s", this.port);
         });
     }
