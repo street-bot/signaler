@@ -9,38 +9,38 @@ import { createLogger } from './log';
 import { ConnectionTableEntry } from "./types";
 
 export class SignalServer {
-    private port: number
-    private httpServer: http.Server
-    private app: express.Application
-    private rt: WSTransport
-    private logger: Logger;
-    private connTable: Map<string, ConnectionTableEntry>;
+  private port: number
+  private httpServer: http.Server
+  private app: express.Application
+  private rt: WSTransport
+  private logger: Logger;
+  private connTable: Map<string, ConnectionTableEntry>;
 
-    constructor() {
-        this.app = express();
-        this.registerMiddlewares();
-        this.registerUnauthenticatedRoutes();
-        this.logger = createLogger();
-        this.connTable = new Map<string, ConnectionTableEntry>();
+  constructor() {
+    this.app = express();
+    this.registerMiddlewares();
+    this.registerUnauthenticatedRoutes();
+    this.logger = createLogger();
+    this.connTable = new Map<string, ConnectionTableEntry>();
 
-        this.port = 8080;
-        this.httpServer = http.createServer(this.app);
-        this.rt = new WSTransport(this.httpServer, this.logger, this.connTable);
-    }
+    this.port = 8080;
+    this.httpServer = http.createServer(this.app);
+    this.rt = new WSTransport(this.httpServer, this.logger, this.connTable);
+  }
 
-    public start(): void {
-        this.rt.register();
-        this.httpServer.listen(this.port, "0.0.0.0", () => {
-            console.log("Running server on port %s", this.port);
-        });
-    }
+  public start(): void {
+    this.rt.register();
+    this.httpServer.listen(this.port, "0.0.0.0", () => {
+      console.log("Running server on port %s", this.port);
+    });
+  }
 
-    private registerMiddlewares() {
-        this.app.use(cors());
-        this.app.use(bodyParser.json());
-    }
+  private registerMiddlewares(): void {
+    this.app.use(cors());
+    this.app.use(bodyParser.json());
+  }
 
-    private registerUnauthenticatedRoutes() {
-        this.app.use('/', router)
-    }
+  private registerUnauthenticatedRoutes(): void {
+    this.app.use('/', router)
+  }
 }

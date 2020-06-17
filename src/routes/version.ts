@@ -1,5 +1,6 @@
 import {VersionObj} from '../controller'
+import { Request, Response } from 'express'
 
-export function version(req: any, res: any): void {
+export function version(_: Request, res: Response): void {
   res.json(VersionObj())
 }
